@@ -4,7 +4,7 @@ var express = require('express');
 var cors = require('cors');
 const path = require("path");
 const fs = require("fs");
-const upload = require("multer")({dest: "/uploads/", limits: 150000});
+const upload = require("multer")({dest: "./uploads", limits: 150000});
 const file = upload.single('upfile');
 
 var app = express();
