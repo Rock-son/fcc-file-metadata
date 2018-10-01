@@ -4,6 +4,7 @@ var express = require('express');
 var cors = require('cors');
 const path = require("path");
 const fs = require("fs");
+var mime = require('mime');
 const upload = require("multer")({dest: "./uploads", limits: 150000});
 const file = upload.single('upfile');
 
@@ -27,12 +28,13 @@ app.post("/api/fileanalyse", file, function(req, res) {
 		readStream.pipe(dest);
 		readStream.on("error", function(err) {res.send({"error": err})});
 		readStream.on("end", function() {
+			const type = (function() { return mime.lookup(target_path) })(target_path);
 			var stats = fs.statSync(target_path);
 			fs.unlinkSync(tmp_path);
 			fs.unlinkSync(target_path);
 
 			res.set({status: 200, "content-type":"application/json"});
-			res.send({"size": stats.size })
+			res.send({name: req.file.originalname, type, "size": stats.size })
 
 		});
 	} else {
